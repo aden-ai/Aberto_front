@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fire Department</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+    <div>Fire Department</div>
+</header>
+
+<div class="container">
+    <div class="sidebar">
+        <button class="sidebar-btn" onclick="showCurrentCase()">Current Case</button>
+        <button class="sidebar-btn" onclick="showReviewCase()">Review Case</button>
+    </div>
+
+    <div class="content" id="mainContent">
+        <h2>Welcome to the Fire Department Dashboard</h2>
+        <p>Select an option to view cases.</p>
+    </div>
+</div>
+
+<script>
+    function showCurrentCase() {
+        document.getElementById('mainContent').innerHTML = `
+            <h2>Current Fire Cases</h2>
+            <p>No active cases at the moment.</p>
+        `;
+    }
+
+    function showReviewCase() {
+        document.getElementById('mainContent').innerHTML = `
+            <h2>Review Fire Cases</h2>
+            <p>No previous cases available.</p>
+        `;
+    }
+</script>
+
+</body>
+</html>

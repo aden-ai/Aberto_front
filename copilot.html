@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aberto Co-Pilot</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+    <div>Aberto Co-Pilot</div>
+    <button class="toggle-btn">Active</button>
+</header>
+
+<div class="container">
+    <div class="sidebar">
+        <button class="sidebar-btn" onclick="showCreateCase()">Create Case</button>
+        <button class="sidebar-btn">Review Case</button>
+    </div>
+
+    <div class="content" id="mainContent">
+        <h2 id="welcomeText">Welcome to Co-Pilot</h2>
+
+        <form id="createCaseForm" class="hidden">
+            <h2>Create New Case</h2>
+
+            <label for="name">Name *</label>
+            <input type="text" id="name" required>
+
+            <label for="age">Age *</label>
+            <input type="number" id="age" required>
+
+            <label for="number">Number</label>
+            <input type="text" id="number">
+
+            <label for="location">Location *</label>
+            <input type="text" id="location" required>
+
+            <label for="accidentDetails">Accident Details</label>
+            <textarea id="accidentDetails"></textarea>
+
+            <label for="acquaintance">Acquaintance</label>
+            <input type="checkbox" id="acquaintance">
+
+            <label for="vehicle">Vehicle Involved</label>
+            <input type="text" id="vehicle">
+
+            <label for="injuredPeople">Number of People Injured</label>
+            <input type="number" id="injuredPeople">
+
+            <label for="alertLevel">Alert Level</label>
+            <select id="alertLevel">
+                <option value="1">Level 1</option>
+                <option value="2">Level 2</option>
+                <option value="3">Level 3</option>
+            </select>
+
+            <div class="button-group">
+                <button type="button" class="create-btn" onclick="showSendAlert()">Create</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Background Overlay for Popup -->
+<div id="popupOverlay" class="popup-overlay hidden"></div>
+
+<!-- Popup -->
+<div class="popup-container hidden" id="alertPopup">
+    <div class="popup">
+        <h3>Send Alert To</h3>
+        <label><input type="checkbox" id="police"> Police</label>
+        <label><input type="checkbox" id="fire"> Fire</label>
+        <label><input type="checkbox" id="ambulance"> Ambulance</label>
+        <button onclick="sendAlert()">Send Alert</button>
+        <button onclick="closePopup()">Close</button>
+    </div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
