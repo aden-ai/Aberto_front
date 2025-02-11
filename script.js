@@ -54,3 +54,78 @@ document.getElementById('createCaseForm').addEventListener('submit', async funct
         alert('Failed to add case');
     }
 });
+
+function showNotification(message, type = "info") {
+    alert(`[${type.toUpperCase()}] ${message}`);
+}
+
+    async function showCases() {
+    showNotification("Fetching all cases...");
+
+    try {
+        const response = await fetch("http://localhost:3000/get_cases");
+        const cases = await response.json();
+
+        if (!cases.length) {
+            document.getElementById("mainContent").innerHTML = "<h2>No cases found.</h2>";
+            return;
+        }
+
+        document.getElementById("mainContent").innerHTML = `
+            <h2>All Cases</h2>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Location</th>
+                        <th>Age</th>
+                        <th>Number</th>
+                        <th>Injured People</th>
+                        <th>Alert Level</th>
+                        <th>Accident Details</th>
+                        <th>Acquaintance</th>
+                        <th>Vehicle</th>
+                        <th>Services</th>
+                    </tr>
+                </thead>
+                <tbody id="caseTableBody"></tbody>
+            </table>
+        `;
+
+        updateTableContent(cases);
+    } catch (error) {
+        console.error("Error fetching cases:", error);
+        showNotification("Failed to load cases", "error");
+    }
+}
+
+function updateTableContent(cases) {
+    const caseTableBody = document.getElementById("caseTableBody");
+    if (!caseTableBody) return;
+
+    caseTableBody.innerHTML = "";
+
+    cases.forEach(caseItem => {
+        const row = createTableRow(caseItem);
+        caseTableBody.appendChild(row);
+    });
+}
+
+function createTableRow(caseItem) {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+        <td>${caseItem.id}</td>
+        <td>${caseItem.name}</td>
+        <td>${caseItem.location}</td>
+        <td>${caseItem.age || ""}</td>
+        <td>${caseItem.number || ""}</td>
+        <td>${caseItem.injuredPeople || ""}</td>
+        <td>${caseItem.alertLevel || ""}</td>
+        <td>${caseItem.accidentDetails || ""}</td>
+        <td>${caseItem.acquaintance ? "Yes" : "No"}</td>
+        <td>${caseItem.vehicle || ""}</td>
+        <td>${caseItem.services || ""}</td>
+    `;
+    return row;
+}
