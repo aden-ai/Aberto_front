@@ -14,10 +14,16 @@
 
 <div class="container">
     <div class="sidebar">
-        <button class="sidebar-btn" onclick="showCases('Hospital')">Hospital Cases</button>
-        <button class="sidebar-btn" onclick="showCases('Police')">Police Cases</button>
-        <button class="sidebar-btn" onclick="showCases('Fire')">Fire Cases</button>
+        <button class="sidebar-btn" onclick="showCases('Hospital', 'all')">All Hospital Cases</button>
+        <button class="sidebar-btn" onclick="showCases('Hospital', 'latest')">Latest Hospital Case</button>
+    
+        <button class="sidebar-btn" onclick="showCases('Police', 'all')">All Police Cases</button>
+        <button class="sidebar-btn" onclick="showCases('Police', 'latest')">Latest Police Case</button>
+    
+        <button class="sidebar-btn" onclick="showCases('Fire', 'all')">All Fire Cases</button>
+        <button class="sidebar-btn" onclick="showCases('Fire', 'latest')">Latest Fire Case</button>
     </div>
+    
 
     <div class="content" id="mainContent">
         <h2>Welcome to the Department Dashboard</h2>
@@ -94,13 +100,42 @@ socket.on('connect_error', (error) => {
         return row;
     }
 
-    function showCases(department) {
-    showNotification(`Switching to ${department} department`);
-    currentDepartment = department;
-    showNotification(`Current department set to: ${currentDepartment}`);
+//     function showCases(department) {
+//     showNotification(`Switching to ${department} department`);
+//     currentDepartment = department;
+//     showNotification(`Current department set to: ${currentDepartment}`);
     
-    document.getElementById('mainContent').innerHTML = `
-        <h2>${department} Cases</h2>
+//     document.getElementById('mainContent').innerHTML = `
+//         <h2>${department} Cases</h2>
+//         <table class="styled-table">
+//             <thead>
+//                 <tr>
+//                     <th>ID</th>
+//                     <th>Name</th>
+//                     <th>Location</th>
+//                     <th>Age</th>
+//                     <th>Number</th>
+//                     <th>Injured People</th>
+//                     <th>Alert Level</th>
+//                     <th>Accident Details</th>
+//                     <th>Acquaintance</th>
+//                     <th>Vehicle</th>
+//                 </tr>
+//             </thead>
+//             <tbody id="caseTableBody"></tbody>
+//         </table>
+//     `;
+//     fetchCases(department);
+// }
+    
+// Unified handler for all case types
+    
+function showCases(department, filterType) {
+    showNotification(`Fetching ${filterType} cases for ${department}`);
+    currentDepartment = department;
+
+    document.getElementById("mainContent").innerHTML = `
+        <h2>${department} Cases (${filterType === "latest" ? "Latest" : "All"})</h2>
         <table class="styled-table">
             <thead>
                 <tr>
@@ -119,10 +154,26 @@ socket.on('connect_error', (error) => {
             <tbody id="caseTableBody"></tbody>
         </table>
     `;
-    fetchCases(department);
+
+    fetchCases(department, filterType);
 }
-    // Unified handler for all case types
-    socket.on("new_case", (newCase) => {
+
+async function fetchCases(department, filterType) {
+    try {
+        const response = await fetch(`http://localhost:3000/get_${department.toLowerCase()}_cases`);
+        const cases = await response.json();
+
+        if (filterType === "latest" && cases.length > 0) {
+            updateTableContent([cases[0]]); // Show only the latest row
+        } else {
+            updateTableContent(cases); // Show all rows
+        }
+    } catch (error) {
+        console.error(`Error fetching ${department.toLowerCase()} cases:`, error);
+    }
+}
+
+socket.on("new_case", (newCase) => {
     console.log("Received new case:", newCase);
 
     if (!newCase.services) {
