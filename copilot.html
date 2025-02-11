@@ -24,57 +24,47 @@
 
         <form id="createCaseForm" class="hidden">
             <h2>Create New Case</h2>
-
+        
             <label for="name">Name *</label>
-            <input type="text" id="name" required>
-
+            <input type="text" id="name" name="name" required>
+        
             <label for="age">Age *</label>
-            <input type="number" id="age" required>
-
+            <input type="number" id="age" name="age" required>
+        
             <label for="number">Number</label>
-            <input type="text" id="number">
-
+            <input type="text" id="number" name="number">
+        
             <label for="location">Location *</label>
-            <input type="text" id="location" required>
-
+            <input type="text" id="location" name="location" required>
+        
             <label for="accidentDetails">Accident Details</label>
-            <textarea id="accidentDetails"></textarea>
-
+            <textarea id="accidentDetails" name="accidentDetails"></textarea>
+        
             <label for="acquaintance">Acquaintance</label>
-            <input type="checkbox" id="acquaintance">
-
+            <input type="checkbox" id="acquaintance" name="acquaintance">
+        
             <label for="vehicle">Vehicle Involved</label>
-            <input type="text" id="vehicle">
-
+            <input type="text" id="vehicle" name="vehicle">
+        
             <label for="injuredPeople">Number of People Injured</label>
-            <input type="number" id="injuredPeople">
-
+            <input type="number" id="injuredPeople" name="injuredPeople">
+        
             <label for="alertLevel">Alert Level</label>
-            <select id="alertLevel">
+            <select id="alertLevel" name="alertLevel">
                 <option value="1">Level 1</option>
                 <option value="2">Level 2</option>
                 <option value="3">Level 3</option>
             </select>
 
+            <h3>Send Alert To</h3>
+            <label><input type="checkbox" id="police" name="services" value="Police"> Police</label>
+            <label><input type="checkbox" id="fire" name="services" value="Fire"> Fire</label>
+            <label><input type="checkbox" id="ambulance" name="services" value="Ambulance"> Ambulance</label>
+        
             <div class="button-group">
-                <button type="button" class="create-btn" onclick="showSendAlert()">Create</button>
+                <button type="submit" class="create-btn">Create</button>
             </div>
         </form>
-    </div>
-</div>
-
-<!-- Background Overlay for Popup -->
-<div id="popupOverlay" class="popup-overlay hidden"></div>
-
-<!-- Popup -->
-<div class="popup-container hidden" id="alertPopup">
-    <div class="popup">
-        <h3>Send Alert To</h3>
-        <label><input type="checkbox" id="police"> Police</label>
-        <label><input type="checkbox" id="fire"> Fire</label>
-        <label><input type="checkbox" id="ambulance"> Ambulance</label>
-        <button onclick="sendAlert()">Send Alert</button>
-        <button onclick="closePopup()">Close</button>
     </div>
 </div>
 
