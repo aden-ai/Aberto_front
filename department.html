@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Department Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+    <div>Department Dashboard</div>
+</header>
+
+<div class="container">
+    <div class="sidebar">
+        <button class="sidebar-btn" onclick="showCases('Hospital')">Hospital Cases</button>
+        <button class="sidebar-btn" onclick="showCases('Police')">Police Cases</button>
+        <button class="sidebar-btn" onclick="showCases('Fire')">Fire Cases</button>
+    </div>
+
+    <div class="content" id="mainContent">
+        <h2>Welcome to the Department Dashboard</h2>
+        <p>Select an option to view cases.</p>
+    </div>
+</div>
+
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script>
+    function showNotification(message, type = 'info') {
+    alert(`[${type}] ${message}`);
+}
+    let currentDepartment = '';
+    const socket = io("http://localhost:3000", {
+    transports: ["websocket"],
+    reconnection: true,
+    reconnectionAttempts: 5,
+});
+
+socket.on("connect", () => {
+    console.log("Connected to server with ID:", socket.id);
+    showNotification("Socket Connected!", "success");
+});
+
+socket.on("disconnect", () => {
+    console.log("Disconnected from server");
+    showNotification("Socket Disconnected!", "warning");
+});
+
+socket.on("connect_error", (error) => {
+    console.error("Connection error:", error);
+    showNotification("Connection Error: " + error.message, "error");
+});
+
+
+socket.on('connect_error', (error) => {
+    showNotification('Connection Error: ' + error.message, 'error');
+});
+    async function fetchCases(department) {
+        try {
+            const response = await fetch(`http://localhost:3000/get_${department.toLowerCase()}_cases`);
+            const cases = await response.json();
+            updateTableContent(cases);
+        } catch (error) {
+            console.error(`Error fetching ${department.toLowerCase()} cases:`, error);
+        }
+    }
+
+    function updateTableContent(cases) {
+        const caseTableBody = document.getElementById('caseTableBody');
+        if (!caseTableBody) return;
+        
+        caseTableBody.innerHTML = '';
+        cases.forEach(caseItem => {
+            const row = createTableRow(caseItem);
+            caseTableBody.appendChild(row);
+        });
+    }
+
+    function createTableRow(caseItem) {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${caseItem.id}</td>
+            <td>${caseItem.name}</td>
+            <td>${caseItem.location}</td>
+            <td>${caseItem.age !== null ? caseItem.age : ''}</td>
+            <td>${caseItem.number !== null ? caseItem.number : ''}</td>
+            <td>${caseItem.injuredpeople !== null ? caseItem.injuredpeople : ''}</td>
+            <td>${caseItem.alertlevel !== null ? caseItem.alertlevel : ''}</td>
+            <td>${caseItem.accidentdetails !== null ? caseItem.accidentdetails : ''}</td>
+            <td>${caseItem.acquaintance !== null ? caseItem.acquaintance : ''}</td>
+            <td>${caseItem.vehicle !== null ? caseItem.vehicle : ''}</td>
+        `;
+        return row;
+    }
+
+    function showCases(department) {
+    showNotification(`Switching to ${department} department`);
+    currentDepartment = department;
+    showNotification(`Current department set to: ${currentDepartment}`);
+    
+    document.getElementById('mainContent').innerHTML = `
+        <h2>${department} Cases</h2>
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Location</th>
+                    <th>Age</th>
+                    <th>Number</th>
+                    <th>Injured People</th>
+                    <th>Alert Level</th>
+                    <th>Accident Details</th>
+                    <th>Acquaintance</th>
+                    <th>Vehicle</th>
+                </tr>
+            </thead>
+            <tbody id="caseTableBody"></tbody>
+        </table>
+    `;
+    fetchCases(department);
+}
+    // Unified handler for all case types
+    socket.on("new_case", (newCase) => {
+    console.log("Received new case:", newCase);
+
+    if (!newCase.services) {
+        showNotification("No services found in case", "error");
+        return;
+    }
+
+    const departmentMap = {
+        Ambulance: "Hospital",
+        Police: "Police",
+        Fire: "Fire"
+    };
+
+    const services = typeof newCase.services === "string" ? newCase.services.split(",") : [];
+
+    services.forEach((service) => {
+        const dept = departmentMap[service.trim()];
+        if (dept) {
+            showNotification(`New case for ${dept}`, "info");
+
+            // Check if the department matches the current one
+            if (dept === currentDepartment) {
+                const caseTableBody = document.getElementById("caseTableBody");
+                if (caseTableBody) {
+                    const row = createTableRow(newCase);
+                    caseTableBody.insertBefore(row, caseTableBody.firstChild);
+                }
+            }
+        }
+    });
+});
+
+
+// Add these event listeners for debugging
+socket.on('connect', () => {
+    console.log('Socket connected:', socket.id);
+});
+
+socket.on('disconnect', () => {
+    console.log('Socket disconnected');
+});
+
+socket.on('error', (error) => {
+    console.log('Socket error:', error);
+});
+</script>
+</body>
+</html>
