@@ -255,3 +255,34 @@ form textarea {
         width: 90%;
     }
 }
+/* */
+
+.table-container {
+    overflow-x: auto;
+    margin-top: 20px;
+}
+
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 16px;
+}
+
+.styled-table th, .styled-table td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+}
+
+.styled-table th {
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.styled-table tr:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.styled-table td {
+    white-space: nowrap;
+}
